@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/denisovdev/go_kafka_sms_sender/producer/config"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -31,5 +32,5 @@ func NewStorage(config *config.Postgres) (*Storage, error) {
 
 func (s *Storage) Close() {
 	s.pool.Close()
-	fmt.Println("postgres connection closed")
+	log.Println("postgres connection closed")
 }

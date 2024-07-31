@@ -1,0 +1,3 @@
+.env
+cmd/bin/*
+!cmd/bin/.gitkeep

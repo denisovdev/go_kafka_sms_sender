@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -20,7 +21,7 @@ type server struct {
 
 func NewHTTPServer(config *config.App, storage storage.Storage) *server {
 	gin.SetMode(config.Mode)
-	var srv server
+	srv := new(server)
 	handler := gin.Default()
 	handler.POST("api/", srv.handleCreateMessage)
 	srv.httpServer = &http.Server{
@@ -30,17 +31,17 @@ func NewHTTPServer(config *config.App, storage storage.Storage) *server {
 	srv.messagerService = services.NewMessager(storage)
 	srv.config = config
 
-	return &srv
+	return srv
 }
 
 func (srv *server) Run(ctx context.Context) error {
 	go func() {
 		<-ctx.Done()
 		srv.stop()
-		fmt.Println("server stopped")
+		log.Println("server stopped")
 	}()
 
-	fmt.Println("run server")
+	log.Println("run server")
 	return srv.httpServer.ListenAndServe()
 }
 
@@ -48,7 +49,7 @@ func (srv *server) stop() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 	if err := srv.httpServer.Shutdown(ctx); err != nil {
-		fmt.Println("can't stop server.. retrying")
+		log.Println("can't stop server.. retrying")
 		srv.stop()
 	}
 }

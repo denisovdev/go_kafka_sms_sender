@@ -45,7 +45,7 @@ var (
 	ErrApp       = errors.New("invalid app config")
 	ErrProcessor = errors.New("invalid processor config")
 	ErrPostgres  = errors.New("invalid postgres config")
-	ErrKafka     = errors.New("invalid kafka config")
+	ErrProducer  = errors.New("invalid producer config")
 )
 
 func NewConfig() (*Config, error) {
@@ -132,7 +132,7 @@ func newProducerConfig() (*Producer, error) {
 		URL: strings.Fields(os.Getenv("PRODUCER_URL")),
 	}
 	if len(producer.URL) == 0 {
-		return nil, ErrKafka
+		return nil, ErrProducer
 	}
 	return &producer, nil
 }

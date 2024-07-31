@@ -4,11 +4,11 @@ import (
 	"context"
 	"time"
 
-	"github.com/denisovdev/go_kafka_sms_sender/producer/storage"
+	"github.com/denisovdev/go_kafka_sms_sender/producer/models"
 )
 
-func (s *Storage) TakeMessage(reserved_to time.Time, limit int) ([]*storage.MessageStorage, error) {
-	messages := make([]*storage.MessageStorage, 0, limit)
+func (s *Storage) TakeMessage(reserved_to time.Time, limit int) ([]*models.MessageStorage, error) {
+	messages := make([]*models.MessageStorage, 0, limit)
 	query := `update message set "reserved_to" = $1 where "id" in (select "id" from message where "status" = 'new' and "reserved_to" < $2 order by created_at desc limit $3) returning "id", "payload"`
 
 	conn, err := s.pool.Acquire(context.Background())
@@ -33,7 +33,7 @@ func (s *Storage) TakeMessage(reserved_to time.Time, limit int) ([]*storage.Mess
 		if err != nil {
 			return nil, err
 		}
-		messages = append(messages, &storage.MessageStorage{
+		messages = append(messages, &models.MessageStorage{
 			ID:      id,
 			Payload: payload,
 		})

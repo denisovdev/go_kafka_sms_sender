@@ -1,7 +1,7 @@
 package kafka
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/IBM/sarama"
 	"github.com/denisovdev/go_kafka_sms_sender/producer/config"
@@ -36,17 +36,17 @@ func (p *producer) Produce(topic string, message []byte) error {
 		return err
 	}
 
-	fmt.Printf("Message is stored in topic(%s)/partition(%d)/offset(%d)\n", topic, partition, offset)
+	log.Printf("Message is stored in topic(%s)/partition(%d)/offset(%d)\n", topic, partition, offset)
 	return nil
 }
 
 func (p *producer) Close() error {
 	err := p.conn.Close()
 	if err != nil {
-		fmt.Println("can't close kafka producer connection")
+		log.Println("can't close kafka producer connection")
 		return err
 	}
-	fmt.Println("kafka producer connection closed")
+	log.Println("kafka producer connection closed")
 	return nil
 }
 
