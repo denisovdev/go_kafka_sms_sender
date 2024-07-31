@@ -1,5 +1,5 @@
 package queue
 
-type Queue interface {
+type Producer interface {
 	Produce(topic string, message []byte) error
 }
