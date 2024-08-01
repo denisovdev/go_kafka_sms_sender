@@ -25,6 +25,7 @@ func NewStorage(config *config.Postgres) (*Storage, error) {
 		return nil, errors.New("unable to connect to database")
 	}
 
+	log.Println("postgres connection pool open")
 	return &Storage{
 		pool: pool,
 	}, nil

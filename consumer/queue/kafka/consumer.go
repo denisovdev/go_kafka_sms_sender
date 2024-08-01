@@ -28,17 +28,18 @@ func NewConsumer(config *config.Consumer) (*consumer, error) {
 		log.Fatal(err)
 	}
 
+	log.Println("kafka consumer connection open")
 	return &consumer{
 		conn: conn,
 	}, nil
 }
 
 func (c *consumer) Consume(ctx context.Context, messagech chan *models.QueueMessage, donech chan struct{}) {
-	log.Println("consumer started")
+	log.Println("kafka consumer started")
 	for {
 		select {
 		case <-ctx.Done():
-			log.Println("consumer stopped")
+			log.Println("kafka consumer stopped")
 			donech <- struct{}{}
 			return
 		default:
@@ -58,5 +59,6 @@ func (c *consumer) Consume(ctx context.Context, messagech chan *models.QueueMess
 }
 
 func (c *consumer) Close() error {
+	log.Println("kafka consumer connection closed")
 	return c.conn.Close()
 }

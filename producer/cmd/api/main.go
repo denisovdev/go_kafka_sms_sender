@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -57,6 +58,7 @@ func main() {
 	}()
 
 	<-donech
+	fmt.Println()
 	cancel()
 
 	wg.Wait()

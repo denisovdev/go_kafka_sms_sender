@@ -26,6 +26,7 @@ func NewProcessor(storage storage.Storage, producer queue.Producer, config *conf
 }
 
 func (processor *processor) StartProcessMessages(ctx context.Context) {
+	log.Println("processor started")
 	ticker := time.NewTicker(processor.Config.ReservationTime)
 	for {
 		select {

@@ -41,7 +41,7 @@ func (srv *server) Run(ctx context.Context) error {
 		log.Println("server stopped")
 	}()
 
-	log.Println("run server")
+	log.Println("server started")
 	return srv.httpServer.ListenAndServe()
 }
 

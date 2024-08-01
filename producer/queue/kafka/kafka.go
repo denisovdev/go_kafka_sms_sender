@@ -22,6 +22,7 @@ func NewProducer(cfg *config.Producer) (*producer, error) {
 		return nil, err
 	}
 
+	log.Println("kafka producer connection open")
 	return &producer{conn: conn}, nil
 }
 
@@ -49,30 +50,3 @@ func (p *producer) Close() error {
 	log.Println("kafka producer connection closed")
 	return nil
 }
-
-// func NewConsumer(config *config.Consumer) {
-// 	consumer, err := kafka.NewProducer(&kafka.ConfigMap{
-// 		"bootstrap.servers": "localhost:9092",
-// 		"group.id":          "foo",
-// 		"auto.offset.reset": "latest",
-// 	})
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	err = consumer.Subscribe(config.Topic, nil)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// }
-
-// func (c *consumer) Consume() {
-// 	for {
-// 		ev := consumer.Poll(100)
-// 		switch e := ev.(type) {
-// 		case *kafka.Message:
-// 			fmt.Printf("consumed new message drom the queue: %s\n", string(e.Value))
-// 		case *kafka.Error:
-// 			fmt.Printf("%v\n", e)
-// 		}
-// 	}
-// }
