@@ -9,4 +9,4 @@ RUN make build
 
 EXPOSE 8080
 
-CMD .cmd/bin/messager
+CMD cmd/bin/messager

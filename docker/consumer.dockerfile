@@ -7,4 +7,4 @@ COPY .env .
 
 RUN make build
 
-CMD .cmd/bin/sender
+CMD cmd/bin/sender
