@@ -64,7 +64,7 @@ curl -X POST -H "Content-Type: application/json" -d '{"phone": "89999999999"}' h
 
 ###### Пример ответа со статусом 200
 ```
-"message successfuly sended"
+"message successfuly sent"
 ```
 
 ###### Пример ответа со статусом 400

@@ -34,5 +34,5 @@ func (srv *server) handleCreateMessage(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, "message successfuly sended")
+	ctx.JSON(http.StatusOK, "message successfuly sent")
 }
