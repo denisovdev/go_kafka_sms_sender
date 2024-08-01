@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/denisovdev/go_kafka_sms_sender/producer/config"
+	"github.com/denisovdev/go_kafka_sms_sender/producer/middleware"
 	"github.com/denisovdev/go_kafka_sms_sender/producer/services"
 	"github.com/denisovdev/go_kafka_sms_sender/producer/storage"
 	"github.com/gin-gonic/gin"
@@ -23,7 +24,7 @@ func NewHTTPServer(config *config.App, storage storage.Storage) *server {
 	gin.SetMode(config.Mode)
 	srv := new(server)
 	handler := gin.Default()
-	handler.POST("api/", srv.handleCreateMessage)
+	handler.POST("api/", middleware.Metrics, srv.handleCreateMessage)
 	srv.httpServer = &http.Server{
 		Addr:    fmt.Sprintf(":%s", config.Port),
 		Handler: handler,

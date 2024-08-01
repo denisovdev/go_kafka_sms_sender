@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/denisovdev/go_kafka_sms_sender/consumer/config"
 	"github.com/denisovdev/go_kafka_sms_sender/consumer/models"
 )

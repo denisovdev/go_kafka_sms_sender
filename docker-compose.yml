@@ -24,7 +24,7 @@ services:
         condition: service_healthy
     restart: no
     volumes:
-      - ./migrations/:/migrations
+      - ./producer/migrations/:/migrations
     command: ["-path", "/migrations/", "-database", "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}?sslmode=disable", "up"]
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -36,20 +36,64 @@ services:
       - "2181:2181"
     restart: unless-stopped
   
-  broker:
+  kafka:
     image: confluentinc/cp-kafka:latest
     container_name: kafka
     ports:
-      - "9092:9092"
+      - "29092:9092"
     depends_on:
       - zookeeper
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
     restart: unless-stopped
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:v2.42.0
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:9.3.6
+    ports:
+      - 3000:3000
+
+  messager:
+    image: messager
+    container_name: messager
+    restart: unless-stopped
+    build:
+      dockerfile: ./docker/producer.dockerfile
+    env_file:
+      - .env
+    ports:
+      - "${APP_PORT}:8080"
+    depends_on:
+      database:
+        condition: service_healthy
+      migrate:
+        condition: service_started
+      kafka: 
+        condition: service_started
+
+  sender:
+    image: sender
+    container_name: sender
+    restart: unless-stopped
+    build:
+      dockerfile: ./docker/consumer.dockerfile
+    env_file:
+      - .env
+    depends_on:
+      kafka: 
+        condition: service_started

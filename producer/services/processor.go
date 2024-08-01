@@ -7,34 +7,35 @@ import (
 	"time"
 
 	"github.com/denisovdev/go_kafka_sms_sender/producer/config"
+	"github.com/denisovdev/go_kafka_sms_sender/producer/metrics"
 	"github.com/denisovdev/go_kafka_sms_sender/producer/queue"
 	"github.com/denisovdev/go_kafka_sms_sender/producer/storage"
 )
 
 type processor struct {
-	Storage  storage.Storage
-	Producer queue.Producer
-	Config   *config.Processor
+	storage  storage.Storage
+	producer queue.Producer
+	config   *config.Processor
 }
 
 func NewProcessor(storage storage.Storage, producer queue.Producer, config *config.Processor) *processor {
 	return &processor{
-		Storage:  storage,
-		Producer: producer,
-		Config:   config,
+		storage:  storage,
+		producer: producer,
+		config:   config,
 	}
 }
 
 func (processor *processor) StartProcessMessages(ctx context.Context) {
 	log.Println("processor started")
-	ticker := time.NewTicker(processor.Config.ReservationTime)
+	ticker := time.NewTicker(processor.config.ReservationTime)
 	for {
 		select {
 		case <-ctx.Done():
 			log.Println("processor stopped")
 			return
 		case <-ticker.C:
-			messages, err := processor.Storage.TakeMessage(time.Now().Add(processor.Config.ReservationTime), processor.Config.TakeMessageLimit)
+			messages, err := processor.storage.TakeMessage(time.Now().Add(processor.config.ReservationTime), processor.config.TakeMessageLimit)
 			if err != nil {
 				log.Printf("can't take messages from database: %v\n", err)
 				continue
@@ -44,7 +45,7 @@ func (processor *processor) StartProcessMessages(ctx context.Context) {
 				continue
 			}
 
-			ctx, cancel := context.WithTimeout(context.Background(), processor.Config.ReservationTime)
+			ctx, cancel := context.WithTimeout(context.Background(), processor.config.ReservationTime)
 
 		produce:
 			for _, message := range messages {
@@ -58,15 +59,16 @@ func (processor *processor) StartProcessMessages(ctx context.Context) {
 						log.Printf("can't marshal message: %v\n", err)
 						continue
 					}
-					err = processor.Producer.Produce(processor.Config.Topic, byte_message)
+					err = processor.producer.Produce(processor.config.Topic, byte_message)
 					if err != nil {
 						log.Printf("can't send message to queue: %v\n", err)
 						continue
 					}
-					err = processor.Storage.UpdateStatus(message.ID)
+					err = processor.storage.UpdateStatus(message.ID)
 					if err != nil {
 						log.Printf("can't update status: %v\n", err)
 					}
+					metrics.MonitorProcessedMessages()
 				}
 			}
 			cancel()

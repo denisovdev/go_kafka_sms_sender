@@ -11,6 +11,7 @@ import (
 	"syscall"
 
 	"github.com/denisovdev/go_kafka_sms_sender/producer/config"
+	"github.com/denisovdev/go_kafka_sms_sender/producer/metrics"
 	"github.com/denisovdev/go_kafka_sms_sender/producer/queue/kafka"
 	"github.com/denisovdev/go_kafka_sms_sender/producer/server"
 	"github.com/denisovdev/go_kafka_sms_sender/producer/services"
@@ -55,6 +56,10 @@ func main() {
 		if err := srv.Run(ctx); err != http.ErrServerClosed {
 			log.Fatal(err)
 		}
+	}()
+
+	go func() {
+		_ = metrics.Listen(":8082")
 	}()
 
 	<-donech
