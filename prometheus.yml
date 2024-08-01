@@ -6,4 +6,4 @@ scrape_configs:
   - job_name: messager
     static_configs:
     - targets:
-        - messager:${PROMETHEUS_SERVER_PORT}
+        - messager:8082
