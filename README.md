@@ -55,11 +55,11 @@ make up
 
 ### Методы API
 
-##### POST `localhost:8080/api`
+##### POST `localhost:8080/api/send`
 Запрос на отправку смс-сообщения. В параметрах необходимо передать номер телефона в международном формате без знака "+"
 ###### Пример запроса
 ``` bash
-curl -X POST -H "Content-Type: application/json" -d '{"phone": "89999999999"}' http://localhost:8080/api/
+curl -X POST -H "Content-Type: application/json" -d '{"phone": "89999999999"}' http://localhost:8080/api/send/
 ```
 
 ###### Пример ответа со статусом 200

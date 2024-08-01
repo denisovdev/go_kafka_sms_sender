@@ -24,7 +24,7 @@ func NewHTTPServer(config *config.App, storage storage.Storage) *server {
 	gin.SetMode(config.Mode)
 	srv := new(server)
 	handler := gin.Default()
-	handler.POST("api/", middleware.Metrics, srv.handleCreateMessage)
+	handler.POST("api/send/", middleware.Metrics, srv.handleCreateMessage)
 	srv.httpServer = &http.Server{
 		Addr:    fmt.Sprintf(":%s", config.Port),
 		Handler: handler,
